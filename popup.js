@@ -82,7 +82,7 @@ function openMask() {
     maskDiv.style.top = 0
     maskDiv.style.width = 0
     maskDiv.style.height = 0
-    maskDiv.style.boxShadow = '0 0 0 100vmax rgba(0, 0, 0, .5)'
+    maskDiv.style.boxShadow = `0 0 0 100vmax rgba(0, 0, 0, ${opacity / 100})`
     maskDiv.style.zIndex = 99999
     maskDiv.addEventListener('click', () => {
       document.body.removeChild(maskDiv)
