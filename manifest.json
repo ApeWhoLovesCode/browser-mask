@@ -1,15 +1,15 @@
 {
   "name": "browser-mask",
   "description": "Provide a mask layer for the browser.",
-  "version": "1.0",
+  "version": "1.0.1",
   "manifest_version": 3,
   "action": {
     "default_title": "浏览器遮罩层",
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icon.png",
-      "128": "icon.png"
-    }
+    "default_popup": "src/popup.html",
+    "default_icon": "images/icon.png"
+  },
+  "icons": {
+    "16": "images/icon.png"
   },
   "permissions": ["storage", "scripting", "activeTab"]
 }
