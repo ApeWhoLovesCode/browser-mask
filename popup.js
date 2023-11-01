@@ -18,7 +18,7 @@ chrome.storage.sync.get('opacity', ({ opacity: opa }) => {
 function changeOpacity(opacity) {
   const maskDiv = document.querySelector('#mask')
   if(maskDiv) {
-    maskDiv.style.background = `rgba(0,0,0,${(opacity ?? INIT_OPACITY) / 100})`
+    maskDiv.style.boxShadow = `0 0 0 100vmax rgba(0, 0, 0, ${opacity / 100})`
   }
   chrome.storage.sync.set({ opacity })
 }
@@ -79,14 +79,11 @@ function openMask() {
     maskDiv.setAttribute('id', 'mask')
     maskDiv.style.position = 'fixed'
     maskDiv.style.left = 0
-    maskDiv.style.right = 0
     maskDiv.style.top = 0
-    maskDiv.style.bottom = 0
-    maskDiv.style.width = '100vw'
-    maskDiv.style.height = '100vh'
-    maskDiv.style.background = `rgba(0,0,0,${opacity / 100})`
+    maskDiv.style.width = 0
+    maskDiv.style.height = 0
+    maskDiv.style.boxShadow = '0 0 0 100vmax rgba(0, 0, 0, .5)'
     maskDiv.style.zIndex = 99999
-    maskDiv.style.transition = `background 0.4s ease`
     maskDiv.addEventListener('click', () => {
       document.body.removeChild(maskDiv)
     })
