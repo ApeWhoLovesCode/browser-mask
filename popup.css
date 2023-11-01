@@ -1,0 +1,75 @@
+:root {
+  --color-light: #b8e6fc;
+  --color-deep: #3772ff;
+  --color-light2: #9de0ff;
+  --color-deep2: #2954fe;
+}
+.pop {
+  box-sizing: border-box;
+  width: 220px;
+  height: fit-content;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: #ddf2fb;
+  user-select: none;
+}
+.btn {
+  background-color: var(--color-light);
+  color: var(--color-deep);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: all .4s ease;
+}
+.btn:hover {
+  background-color: var(--color-light2);
+  color: var(--color-deep2);
+  border-radius: 8px;
+}
+.progressWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.tips {
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  transform: translate(-50%);
+  color: var(--color-deep);
+  font-weight: bold;
+  font-size: 14px;
+}
+.progressWrap .btn {
+  text-align: center;
+  border-radius: 50%;
+  padding: 0px;
+  width: 24px;
+  height: 24px;
+  line-height: 22px;
+  font-size: 16px;
+}
+#progress {
+  margin: 0 10px;
+  flex: 1;
+  height: 50px;
+  cursor: pointer;
+}
+.bottom {
+  margin-top: 16px;
+  padding: 0 20px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 300px;
+  bottom: 0;
+  background: rgba(0, 0, 0, .4);
+  z-index: 99999;
+}
