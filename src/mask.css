@@ -1,0 +1,14 @@
+
+#mask {
+  --size: 16;
+  position: fixed;
+  left: calc(var(--size) / 2 * -1px);
+  top: calc(var(--size) / 2 * -1px);
+  width: calc(var(--size) * 1px);
+  height: calc(var(--size) * 1px);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 99999;
+  background-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.4);
+}

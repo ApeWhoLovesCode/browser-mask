@@ -63,13 +63,3 @@
   justify-content: space-between;
   align-items: center;
 }
-
-.mask {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 300px;
-  bottom: 0;
-  background: rgba(0, 0, 0, .4);
-  z-index: 99999;
-}

@@ -2,13 +2,7 @@ function openMask() {
   chrome.storage.sync.get('opacity', ({ opacity }) => {
     const maskDiv = document.createElement('div')
     maskDiv.setAttribute('id', 'mask')
-    maskDiv.style.position = 'fixed'
-    maskDiv.style.left = 0
-    maskDiv.style.top = 0
-    maskDiv.style.width = 0
-    maskDiv.style.height = 0
     maskDiv.style.boxShadow = `0 0 0 100vmax rgba(0, 0, 0, ${opacity / 100})`
-    maskDiv.style.zIndex = 99999
     document.body.appendChild(maskDiv)
   });
 }

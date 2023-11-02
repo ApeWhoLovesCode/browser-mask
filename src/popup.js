@@ -3,8 +3,6 @@ const INIT_OPACITY = 40;
 
 const progress = document.querySelector('#progress')
 const progressValue = document.querySelector('#progressValue')
-const reduceBtn = document.querySelector('.reduce')
-const addBtn = document.querySelector('.add')
 
 chrome.storage.sync.get('opacity', ({ opacity: opa }) => {
   if(!opa) {
@@ -15,23 +13,21 @@ chrome.storage.sync.get('opacity', ({ opacity: opa }) => {
   }
 });
 
-reduceBtn.addEventListener('click', () => {
+document.querySelector('.reduce').addEventListener('click', () => {
   chrome.storage.sync.get('opacity', ({ opacity }) => {
     changeValue(opacity - 10)
   });
 })
 
-addBtn.addEventListener('click', () => {
+document.querySelector('.add').addEventListener('click', () => {
   chrome.storage.sync.get('opacity', ({ opacity }) => {
     changeValue(opacity + 10)
   });
 })
 
 progress.addEventListener('mousedown', (event) => {
+  changeValue(event.offsetX * 100 / progress.clientWidth)
   const startX = event.pageX
-
-  // 待开发：刚开始点击的时候直接触发进度条
-
   let startOpacity = INIT_OPACITY
   chrome.storage.sync.get('opacity', ({ opacity }) => {
     startOpacity = opacity
@@ -60,6 +56,11 @@ document.querySelector('#open').addEventListener('click', async () => {
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     func: openMask,
+  });
+  chrome.scripting.insertCSS({
+    target: { tabId: tab.id },
+    // 这里的路径要按项目根目录开始
+    files: ['src/mask.css'] 
   });
 })
 
