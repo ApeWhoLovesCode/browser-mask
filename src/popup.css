@@ -32,7 +32,7 @@
   display: flex;
   align-items: center;
 }
-.tips {
+#progressValue {
   position: absolute;
   left: 50%;
   bottom: -10px;
