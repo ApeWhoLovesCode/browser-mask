@@ -1,21 +1,23 @@
 function openMask() {
   chrome.storage.sync.get('opacity', ({ opacity }) => {
-    const maskDiv = document.createElement('div')
-    maskDiv.setAttribute('id', 'mask')
-    maskDiv.style.boxShadow = `0 0 0 100vmax rgba(0, 0, 0, ${opacity / 100})`
-    document.body.appendChild(maskDiv)
+    const maskWrap = document.createElement('div')
+    maskWrap.setAttribute('id', 'maskWrap')
+    // 给 maskWrap 添加变量
+    maskWrap.style.setProperty('--size', 22)
+    maskWrap.style.setProperty('--opacity', opacity / 100)
+    document.body.appendChild(maskWrap)
   });
 }
 
 function closeMask() {
-  const maskDiv = document.querySelector('#mask')
-  document.body.removeChild(maskDiv)
+  const maskWrap = document.querySelector('#maskWrap')
+  document.body.removeChild(maskWrap)
 }
 
 function changeOpacity(opacity) {
-  const maskDiv = document.querySelector('#mask')
-  if(maskDiv) {
-    maskDiv.style.boxShadow = `0 0 0 100vmax rgba(0, 0, 0, ${opacity / 100})`
+  const maskWrap = document.querySelector('#maskWrap')
+  if(maskWrap) {
+    maskWrap.style.setProperty('--opacity', opacity / 100)
   }
 }
 
@@ -24,11 +26,52 @@ function changeValue(newOpacity) {
   progress.value = opacity
   progressValue.textContent = opacity
   chrome.storage.sync.set({ opacity })
-  chrome.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
+  getTabId().then((tabId) => {
     chrome.scripting.executeScript({
-      target: { tabId: tab.id },
+      target: { tabId },
       args: [opacity],
       func: changeOpacity,
     });
+  })
+}
+
+/** 打开mask的移动操作 */
+function openMaskMove(maskInfo) {
+  const maskWrap = document.querySelector('#maskWrap')
+  function maskMove(event) {
+    const startX = maskInfo.x - event.pageX
+    const startY = maskInfo.y - event.pageY
+    let timer = null
+    function move(e) {
+      const changeX = startX + e.pageX
+      const changeY = startY + e.pageY
+      maskWrap.style.transform = `translate(${changeX}px, ${changeY}px)`
+      maskInfo.x = changeX
+      maskInfo.y = changeY
+      if(timer) return // 节流一下，防止触发太频繁
+      timer = setTimeout(() => {
+        timer = null
+      }, 30);
+    }
+  
+    document.addEventListener('mousemove', move)
+    document.addEventListener('mouseup', () => {
+      document.removeEventListener('mousemove', move)
+    })
+  }
+  const maskList = ['LeftTop', 'RightTop', 'RrightBottom', 'LeftBottom']
+  maskList.forEach(className => {
+    const maskItemDom = document.createElement('div')
+    maskItemDom.setAttribute('class', `mask mask${className}`)
+    maskItemDom.addEventListener('mousedown', maskMove)
+    maskWrap.appendChild(maskItemDom)
+  })
+}
+
+/** 关闭mask的移动操作 */
+function closeMaskMove() {
+  const maskList = document.querySelectorAll(`.mask`)
+  maskList.forEach(item => {
+    item.remove()
   })
 }
