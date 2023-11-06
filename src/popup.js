@@ -1,13 +1,29 @@
 /** 初始的透明度 */
 const INIT_OPACITY = 40;
+const INIT_MASKINFO = {x: 0, y: 0, size: 100, isMove: false}
+const getInitMaskInfo = () => structuredClone(INIT_MASKINFO)
 
 const progress = document.querySelector('#progress')
 const progressValue = document.querySelector('#progressValue')
+const openBtn = document.querySelector('#openBtn')
+const moveBtn = document.querySelector('#moveBtn')
 
 async function getTabId() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   return tab.id
 }
+
+function getStorageSync(key) {
+  return new Promise((resolve) => {
+    chrome.storage.sync.get(key, (item) => {
+      resolve(item[key])
+    })
+  })
+}
+
+chrome.storage.sync.get('isOpen', ({ isOpen }) => {
+  openBtn.textContent = !isOpen ? '打开' : '关闭'
+});
 
 chrome.storage.sync.get('opacity', ({ opacity }) => {
   if(!opacity) {
@@ -19,8 +35,9 @@ chrome.storage.sync.get('opacity', ({ opacity }) => {
 });
 
 chrome.storage.sync.get('maskInfo', ({ maskInfo }) => {
+  moveBtn.setAttribute('class', `btn${maskInfo?.isMove ? ' btnDisable' : ''}`)
   if(!maskInfo) {
-    chrome.storage.sync.set({ maskInfo: {x: 0, y: 0, size: 100, isMove: false} })
+    chrome.storage.sync.set({ maskInfo: getInitMaskInfo()})
   }
 });
 
@@ -61,35 +78,46 @@ progress.addEventListener('mousedown', (event) => {
   })
 })
 
-document.querySelector('#open').addEventListener('click', async () => {
-  const tabId = await getTabId();
-  // 获取当前激活的tab的id，注入执行 func
-  chrome.scripting.executeScript({
-    target: { tabId },
-    func: openMask,
-  });
-  chrome.scripting.insertCSS({
-    target: { tabId },
-    // 这里的路径要按项目根目录开始
-    files: ['src/mask.css'] 
-  });
-})
-
-document.querySelector('#close').addEventListener('click', () => {
-  getTabId().then((tabId) => {
-    chrome.scripting.executeScript({
+openBtn.addEventListener('click', async () => {
+  const isOpen = await getStorageSync('isOpen')
+  if(!isOpen) { // 打开mask
+    const tabId = await getTabId();
+    // 获取当前激活的tab的id，注入执行 func
+    chrome.scripting.executeScript({target: { tabId }, func: openMask});
+    chrome.scripting.insertCSS({
       target: { tabId },
-      func: closeMask,
+      // 这里的路径要按项目根目录开始
+      files: ['src/mask.css'] 
     });
-  })
+    getStorageSync('maskInfo').then(maskInfo => {
+      if(maskInfo.isMove) {
+        setTimeout(() => {
+          chrome.scripting.executeScript({
+            target: { tabId },
+            args: [maskInfo],
+            func: openMaskMove,
+          });
+        }, 10);
+      }
+    })
+  } else { // 关闭mask
+    getTabId().then((tabId) => {
+      chrome.scripting.executeScript({
+        target: { tabId },
+        func: closeMask,
+      });
+    })
+  }
+  openBtn.textContent = isOpen ? '打开' : '关闭'
+  chrome.storage.sync.set({isOpen: !isOpen})
 })
-
-const moveBtn = document.querySelector('#moveBtn')
 
 moveBtn.addEventListener('click', async () => {
+  const isOpen = await getStorageSync('isOpen')
+  if(!isOpen) return
   chrome.storage.sync.get('maskInfo', ({ maskInfo }) => {
     if(!maskInfo.isMove) {
-      moveBtn.setAttribute('class', 'btn')
+      moveBtn.setAttribute('class', 'btn btnDisable')
       getTabId().then((tabId) => {
         chrome.scripting.executeScript({
           target: { tabId },
@@ -98,7 +126,7 @@ moveBtn.addEventListener('click', async () => {
         });
       })
     } else {
-      moveBtn.setAttribute('class', 'btn btnDisable')
+      moveBtn.setAttribute('class', 'btn')
       getTabId().then((tabId) => {
         chrome.scripting.executeScript({
           target: { tabId },

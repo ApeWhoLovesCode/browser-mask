@@ -11,7 +11,9 @@ function openMask() {
 
 function closeMask() {
   const maskWrap = document.querySelector('#maskWrap')
-  document.body.removeChild(maskWrap)
+  if(maskWrap) {
+    document.body.removeChild(maskWrap)
+  }
 }
 
 function changeOpacity(opacity) {
