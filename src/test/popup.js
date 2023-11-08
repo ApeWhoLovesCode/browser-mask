@@ -27,7 +27,7 @@ function changeOpacity(newOpacity) {
   progress.value = opacity2
   progressValue.textContent = opacity2
   opacity = opacity2
-  const maskWrap = document.querySelector('#maskWrap')
+  const maskWrap = document.querySelector('#browser-maskWrap')
   if(maskWrap) {
     // maskWrap.style.boxShadow = `0 0 0 100vmax rgba(0, 0, 0, ${opacity / 100})`
     maskWrap.style.setProperty('--opacity', opacity / 100)
@@ -35,7 +35,7 @@ function changeOpacity(newOpacity) {
 }
 
 function openMaskMove() {
-  const maskWrap = document.querySelector('#maskWrap')
+  const maskWrap = document.querySelector('#browser-maskWrap')
   function maskMove(event) {
     const startX = maskInfo.x - event.pageX
     const startY = maskInfo.y - event.pageY
@@ -67,7 +67,7 @@ function openMaskMove() {
 }
 
 function closeMaskMove() {
-  const maskList = document.querySelectorAll(`.mask`)
+  const maskList = document.querySelectorAll(`.browser-mask`)
   maskList.forEach(item => {
     item.remove()
   })
@@ -75,7 +75,7 @@ function closeMaskMove() {
 
 function openMask() {
   const maskWrap = document.createElement('div')
-  maskWrap.setAttribute('id', 'maskWrap')
+  maskWrap.setAttribute('id', 'browser-maskWrap')
   // 给 maskWrap 添加变量
   maskWrap.style.setProperty('--size', 22)
   maskWrap.style.setProperty('--opacity', opacity / 100)
@@ -85,7 +85,7 @@ function openMask() {
 }
 
 function closeMask() {
-  const maskWrap = document.querySelector('#maskWrap')
+  const maskWrap = document.querySelector('#browser-maskWrap')
   document.body.removeChild(maskWrap)
 }
 

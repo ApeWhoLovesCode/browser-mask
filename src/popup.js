@@ -1,7 +1,12 @@
 /** 初始的透明度 */
 const INIT_OPACITY = 40;
 const INIT_MASKINFO = {x: 0, y: 0, size: 100, isMove: false}
-const getInitMaskInfo = () => structuredClone(INIT_MASKINFO)
+const getInitMaskInfo = () => {
+  if(structuredClone) {
+    return structuredClone(INIT_MASKINFO)
+  }
+  return JSON.parse(JSON.stringify(INIT_MASKINFO))
+}
 
 const progress = document.querySelector('#progress')
 const progressValue = document.querySelector('#progressValue')

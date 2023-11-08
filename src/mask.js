@@ -39,7 +39,7 @@ async function executeOpenMask(tabId) {
 function openMask(maskInfo) {
   chrome.storage.sync.get('opacity', ({ opacity }) => {
     const maskWrap = document.createElement('div')
-    maskWrap.setAttribute('id', 'maskWrap')
+    maskWrap.setAttribute('id', 'browser-maskWrap')
     maskWrap.style.transform = `translate(${maskInfo.x}px, ${maskInfo.y}px)`
     // 给 maskWrap 添加变量
     maskWrap.style.setProperty('--size', 22)
@@ -49,14 +49,14 @@ function openMask(maskInfo) {
 }
 
 function injectCloseMask() {
-  const maskWrap = document.querySelector('#maskWrap')
+  const maskWrap = document.querySelector('#browser-maskWrap')
   if(maskWrap) {
     document.body.removeChild(maskWrap)
   }
 }
 
 function injectChangeOpacity(opacity) {
-  const maskWrap = document.querySelector('#maskWrap')
+  const maskWrap = document.querySelector('#browser-maskWrap')
   if(maskWrap) {
     maskWrap.style.setProperty('--opacity', opacity / 100)
   }
@@ -77,7 +77,7 @@ function changeOpacity(newOpacity) {
 }
 
 function injectChangeMask(maskInfo) {
-  const maskWrap = document.querySelector('#maskWrap')
+  const maskWrap = document.querySelector('#browser-maskWrap')
   if(maskWrap) {
     maskWrap.style.transform = `translate(${maskInfo.x}px, ${maskInfo.y}px)`
   }
@@ -85,7 +85,7 @@ function injectChangeMask(maskInfo) {
 
 /** 打开mask的移动操作 */
 function openMaskMove(maskInfo) {
-  const maskWrap = document.querySelector('#maskWrap')
+  const maskWrap = document.querySelector('#browser-maskWrap')
   function maskMove(event) {
     const startX = maskInfo.x - event.pageX
     const startY = maskInfo.y - event.pageY
@@ -106,7 +106,7 @@ function openMaskMove(maskInfo) {
   const maskList = ['LeftTop', 'RightTop', 'RrightBottom', 'LeftBottom']
   maskList.forEach(className => {
     const maskItemDom = document.createElement('div')
-    maskItemDom.setAttribute('class', `mask mask${className}`)
+    maskItemDom.setAttribute('class', `browser-mask browser-mask${className}`)
     maskItemDom.addEventListener('mousedown', maskMove)
     maskWrap.appendChild(maskItemDom)
   })
@@ -114,7 +114,7 @@ function openMaskMove(maskInfo) {
 
 /** 关闭mask的移动操作 */
 function closeMaskMove() {
-  const maskList = document.querySelectorAll(`.mask`)
+  const maskList = document.querySelectorAll(`.browser-mask`)
   maskList.forEach(item => {
     item.remove()
   })
