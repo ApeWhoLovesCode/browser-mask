@@ -35,18 +35,18 @@ chrome.storage.sync.get('maskInfo', ({ maskInfo }) => {
 
 document.querySelector('.reduce').addEventListener('click', () => {
   chrome.storage.sync.get('opacity', ({ opacity }) => {
-    changeValue(opacity - 10)
+    changeOpacity(opacity - 10)
   });
 })
 
 document.querySelector('.add').addEventListener('click', () => {
   chrome.storage.sync.get('opacity', ({ opacity }) => {
-    changeValue(opacity + 10)
+    changeOpacity(opacity + 10)
   });
 })
 
 progress.addEventListener('mousedown', (event) => {
-  changeValue(event.offsetX * 100 / progress.clientWidth)
+  changeOpacity(event.offsetX * 100 / progress.clientWidth)
   const startX = event.pageX
   let startOpacity = INIT_OPACITY
   chrome.storage.sync.get('opacity', ({ opacity }) => {
@@ -57,7 +57,7 @@ progress.addEventListener('mousedown', (event) => {
   function move(e) {
     const changeX = e.pageX - startX
     if(timer) return // 节流一下，防止触发太频繁
-    changeValue(startOpacity + changeX * 100 / progress.clientWidth)
+    changeOpacity(startOpacity + changeX * 100 / progress.clientWidth)
     timer = setTimeout(() => {
       timer = null
     }, 60);
@@ -78,7 +78,7 @@ openBtn.addEventListener('click', async () => {
   } else { // 关闭mask
     chrome.scripting.executeScript({
       target: { tabId },
-      func: closeMask,
+      func: injectCloseMask,
     });
   }
   openBtn.textContent = isOpen ? '打开' : '关闭'
@@ -86,37 +86,52 @@ openBtn.addEventListener('click', async () => {
 })
 
 moveBtn.addEventListener('click', async () => {
-  chrome.storage.sync.get('maskInfo', ({ maskInfo }) => {
-    if(!maskInfo.isMove) {
-      moveBtn.setAttribute('class', 'btn btnDisable')
-      getTabId().then((tabId) => {
-        chrome.scripting.executeScript({
-          target: { tabId },
-          args: [maskInfo],
-          func: openMaskMove,
-        });
-      })
-    } else {
-      moveBtn.setAttribute('class', 'btn')
-      getTabId().then((tabId) => {
-        chrome.scripting.executeScript({
-          target: { tabId },
-          func: closeMaskMove,
-        });
-      })
-    }
-    maskInfo.isMove = !maskInfo.isMove
-    chrome.storage.sync.set({ maskInfo })
-  });
+  const maskInfo = await getStorageSync('maskInfo')
+  const tabId = await getTabId()
+  if(!maskInfo.isMove) {
+    moveBtn.setAttribute('class', 'btn btnDisable')
+    chrome.scripting.executeScript({
+      target: { tabId },
+      args: [maskInfo],
+      func: openMaskMove,
+    });
+  } else {
+    moveBtn.setAttribute('class', 'btn')
+    chrome.scripting.executeScript({
+      target: { tabId },
+      func: closeMaskMove,
+    });
+  }
+  maskInfo.isMove = !maskInfo.isMove
+  chrome.storage.sync.set({ maskInfo })
 })
 
-// 在这里执行您需要在 popup 关闭时进行的操作
-window.addEventListener('unload', function() {
-  chrome.storage.sync.set({isOpen: false})
+// 点击重置
+document.querySelector('#reset').addEventListener('click', () => {
+  changeOpacity(INIT_OPACITY)
+  const maskInfo = getInitMaskInfo()
+  chrome.storage.sync.set({maskInfo})
+  moveBtn.setAttribute('class', 'btn')
+  getTabId().then((tabId) => {
+    chrome.scripting.executeScript({
+      target: { tabId },
+      args: [maskInfo],
+      func: injectChangeMask,
+    });
+    chrome.scripting.executeScript({
+      target: { tabId },
+      func: closeMaskMove,
+    });
+  })
+})
+
+// 在这里执行您需要在 popup 关闭时进行的操作 （没用）
+// window.addEventListener('unload', function() {
+  // chrome.storage.sync.set({isOpen: false})
   // getTabId().then(tabId => {
   //   chrome.scripting.executeScript({
   //     target: { tabId },
-  //     func: closeMask,
+  //     func: injectCloseMask,
   //   });
   // });
-});
+// });

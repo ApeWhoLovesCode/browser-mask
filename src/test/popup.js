@@ -3,14 +3,14 @@ const maskInfo = {x: 0, y: 0, size: 100, isMove: false}
 const progress = document.querySelector('#progress')
 
 progress.addEventListener('mousedown', (event) => {
-  changeValue(event.offsetX * 100 / progress.clientWidth)
+  changeOpacity(event.offsetX * 100 / progress.clientWidth)
   const startX = event.pageX
   const startOpacity = opacity
   let timer = null
   function move(e) {
     const changeX = e.pageX - startX
     if(timer) return // 节流一下，防止触发太频繁
-    changeValue(startOpacity + changeX * 100 / progress.clientWidth)
+    changeOpacity(startOpacity + changeX * 100 / progress.clientWidth)
     timer = setTimeout(() => {
       timer = null
     }, 30);
@@ -22,7 +22,7 @@ progress.addEventListener('mousedown', (event) => {
   })
 })
 
-function changeValue(newOpacity) {
+function changeOpacity(newOpacity) {
   let opacity2 = Math.min(Math.max(Math.round(newOpacity), 0), 100);
   progress.value = opacity2
   progressValue.textContent = opacity2

@@ -48,21 +48,21 @@ function openMask(maskInfo) {
   });
 }
 
-function closeMask() {
+function injectCloseMask() {
   const maskWrap = document.querySelector('#maskWrap')
   if(maskWrap) {
     document.body.removeChild(maskWrap)
   }
 }
 
-function changeOpacity(opacity) {
+function injectChangeOpacity(opacity) {
   const maskWrap = document.querySelector('#maskWrap')
   if(maskWrap) {
     maskWrap.style.setProperty('--opacity', opacity / 100)
   }
 }
 
-function changeValue(newOpacity) {
+function changeOpacity(newOpacity) {
   let opacity = Math.min(Math.max(Math.round(newOpacity), 0), 100);
   progress.value = opacity
   progressValue.textContent = opacity
@@ -71,9 +71,16 @@ function changeValue(newOpacity) {
     chrome.scripting.executeScript({
       target: { tabId },
       args: [opacity],
-      func: changeOpacity,
+      func: injectChangeOpacity,
     });
   })
+}
+
+function injectChangeMask(maskInfo) {
+  const maskWrap = document.querySelector('#maskWrap')
+  if(maskWrap) {
+    maskWrap.style.transform = `translate(${maskInfo.x}px, ${maskInfo.y}px)`
+  }
 }
 
 /** 打开mask的移动操作 */
@@ -82,17 +89,12 @@ function openMaskMove(maskInfo) {
   function maskMove(event) {
     const startX = maskInfo.x - event.pageX
     const startY = maskInfo.y - event.pageY
-    let timer = null
     function move(e) {
       const changeX = startX + e.pageX
       const changeY = startY + e.pageY
       maskWrap.style.transform = `translate(${changeX}px, ${changeY}px)`
       maskInfo.x = changeX
       maskInfo.y = changeY
-      if(timer) return // 节流一下，防止触发太频繁
-      timer = setTimeout(() => {
-        timer = null
-      }, 30);
     }
   
     document.addEventListener('mousemove', move)
