@@ -1,0 +1,45 @@
+
+#maskWrap {
+  z-index: 99999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  box-shadow: 50vmax 50vmax 0 50vmax rgba(0, 0, 0, var(--opacity, 0.4));
+}
+.mask {
+  box-sizing: border-box;
+  width: calc(var(--size) * 1px);
+  height: calc(var(--size) * 1px);
+  border-radius: 50%;
+  border: calc(var(--size) / 5 * 1px) solid rgba(245, 245, 245, 0.3);
+  background-color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  margin: calc(var(--size) / 2 * -1px) 0 0 calc(var(--size) / 2 * -1px);
+  touch-action: none;
+  user-select: none;
+}
+.mask:hover {
+  border-color: rgba(245, 245, 245, 0.5);
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.maskLeftTop {
+  
+}
+.maskRightTop {
+  position: absolute;
+  left: 99vw;
+  top: 0;
+}
+.maskRrightBottom {
+  position: absolute;
+  left: 99vw;
+  top: 99vh;
+}
+.maskLeftBottom {
+  position: absolute;
+  left: 1vw;
+  /** mac浏览器自带圆角，防止无法点击 */
+  top: 99vh;
+}

@@ -1,7 +1,9 @@
 :root {
   --color-light: #b8e6fc;
+  --color-light-disable: #d5e0e5;
   --color-deep: #3772ff;
   --color-light2: #9de0ff;
+  --color-light2-disable: #c5d2d8;
   --color-deep2: #2954fe;
 }
 .pop {
@@ -32,7 +34,7 @@
   display: flex;
   align-items: center;
 }
-.tips {
+#progressValue {
   position: absolute;
   left: 50%;
   bottom: -10px;
@@ -58,18 +60,15 @@
 }
 .bottom {
   margin-top: 16px;
-  padding: 0 20px 10px;
+  padding: 0 0px 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
-.mask {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 300px;
-  bottom: 0;
-  background: rgba(0, 0, 0, .4);
-  z-index: 99999;
+.btnDisable {
+  text-decoration: line-through;
+  background-color: var(--color-light-disable);
+}
+.btnDisable:hover {
+  background-color: var(--color-light2-disable);
 }

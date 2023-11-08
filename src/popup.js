@@ -1,56 +1,53 @@
 /** 初始的透明度 */
 const INIT_OPACITY = 40;
+const INIT_MASKINFO = {x: 0, y: 0, size: 100, isMove: false}
+const getInitMaskInfo = () => structuredClone(INIT_MASKINFO)
 
 const progress = document.querySelector('#progress')
-const reduceBtn = document.querySelector('.reduce')
-const addBtn = document.querySelector('.add')
-const tips = document.querySelector('.tips')
+const progressValue = document.querySelector('#progressValue')
+const openBtn = document.querySelector('#openBtn')
+const moveBtn = document.querySelector('#moveBtn')
 
-chrome.storage.sync.get('opacity', ({ opacity: opa }) => {
-  if(!opa) {
+chrome.storage.sync.get('isOpen', ({ isOpen }) => {
+  openBtn.textContent = !isOpen ? '打开' : '关闭'
+  // if(isOpen) {
+  //   getTabId().then(tabId => {
+  //     executeOpenMask(tabId)
+  //   })
+  // }
+});
+
+chrome.storage.sync.get('opacity', ({ opacity }) => {
+  if(!opacity) {
     chrome.storage.sync.set({ opacity: INIT_OPACITY })
   } else {
-    progress.value = opa
-    tips.textContent = opa
+    progress.value = opacity
+    progressValue.textContent = opacity
   }
 });
 
-function changeOpacity(opacity) {
-  const maskDiv = document.querySelector('#mask')
-  if(maskDiv) {
-    maskDiv.style.boxShadow = `0 0 0 100vmax rgba(0, 0, 0, ${opacity / 100})`
+chrome.storage.sync.get('maskInfo', ({ maskInfo }) => {
+  moveBtn.setAttribute('class', `btn${maskInfo?.isMove ? ' btnDisable' : ''}`)
+  if(!maskInfo) {
+    chrome.storage.sync.set({ maskInfo: getInitMaskInfo()})
   }
-  chrome.storage.sync.set({ opacity })
-}
+});
 
-function changeValue(newOpacity) {
-  let opacity = Math.min(Math.max(Math.round(newOpacity), 0), 100);
-  progress.value = opacity
-  tips.textContent = opacity
-  chrome.storage.sync.set({ opacity })
-  chrome.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      args: [opacity],
-      func: changeOpacity,
-    });
-  })
-}
-reduceBtn.addEventListener('click', () => {
+document.querySelector('.reduce').addEventListener('click', () => {
   chrome.storage.sync.get('opacity', ({ opacity }) => {
-    changeValue(opacity - 10)
+    changeOpacity(opacity - 10)
   });
 })
-addBtn.addEventListener('click', () => {
+
+document.querySelector('.add').addEventListener('click', () => {
   chrome.storage.sync.get('opacity', ({ opacity }) => {
-    changeValue(opacity + 10)
+    changeOpacity(opacity + 10)
   });
 })
+
 progress.addEventListener('mousedown', (event) => {
+  changeOpacity(event.offsetX * 100 / progress.clientWidth)
   const startX = event.pageX
-
-  // 待开发：刚开始点击的时候直接触发进度条
-
   let startOpacity = INIT_OPACITY
   chrome.storage.sync.get('opacity', ({ opacity }) => {
     startOpacity = opacity
@@ -60,7 +57,7 @@ progress.addEventListener('mousedown', (event) => {
   function move(e) {
     const changeX = e.pageX - startX
     if(timer) return // 节流一下，防止触发太频繁
-    changeValue(startOpacity + changeX * 100 / progress.clientWidth)
+    changeOpacity(startOpacity + changeX * 100 / progress.clientWidth)
     timer = setTimeout(() => {
       timer = null
     }, 60);
@@ -73,39 +70,68 @@ progress.addEventListener('mousedown', (event) => {
   })
 })
 
-function openMask() {
-  chrome.storage.sync.get('opacity', ({ opacity }) => {
-    const maskDiv = document.createElement('div')
-    maskDiv.setAttribute('id', 'mask')
-    maskDiv.style.position = 'fixed'
-    maskDiv.style.left = 0
-    maskDiv.style.top = 0
-    maskDiv.style.width = 0
-    maskDiv.style.height = 0
-    maskDiv.style.boxShadow = `0 0 0 100vmax rgba(0, 0, 0, ${opacity / 100})`
-    maskDiv.style.zIndex = 99999
-    document.body.appendChild(maskDiv)
-  });
-}
-
-function closeMask() {
-  const maskDiv = document.querySelector('#mask')
-  document.body.removeChild(maskDiv)
-}
-
-document.querySelector('#open').addEventListener('click', async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  // 监听点击事件，并获取当前激活的tab的id，执行 func
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: openMask,
-  });
+openBtn.addEventListener('click', async () => {
+  const tabId = await getTabId();
+  const isOpen = await getStorageSync('isOpen')
+  if(!isOpen) { // 打开mask
+    executeOpenMask(tabId)
+  } else { // 关闭mask
+    chrome.scripting.executeScript({
+      target: { tabId },
+      func: injectCloseMask,
+    });
+  }
+  openBtn.textContent = isOpen ? '打开' : '关闭'
+  chrome.storage.sync.set({isOpen: !isOpen})
 })
 
-document.querySelector('#close').addEventListener('click', async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: closeMask,
-  });
+moveBtn.addEventListener('click', async () => {
+  const maskInfo = await getStorageSync('maskInfo')
+  const tabId = await getTabId()
+  if(!maskInfo.isMove) {
+    moveBtn.setAttribute('class', 'btn btnDisable')
+    chrome.scripting.executeScript({
+      target: { tabId },
+      args: [maskInfo],
+      func: openMaskMove,
+    });
+  } else {
+    moveBtn.setAttribute('class', 'btn')
+    chrome.scripting.executeScript({
+      target: { tabId },
+      func: closeMaskMove,
+    });
+  }
+  maskInfo.isMove = !maskInfo.isMove
+  chrome.storage.sync.set({ maskInfo })
 })
+
+// 点击重置
+document.querySelector('#reset').addEventListener('click', () => {
+  changeOpacity(INIT_OPACITY)
+  const maskInfo = getInitMaskInfo()
+  chrome.storage.sync.set({maskInfo})
+  moveBtn.setAttribute('class', 'btn')
+  getTabId().then((tabId) => {
+    chrome.scripting.executeScript({
+      target: { tabId },
+      args: [maskInfo],
+      func: injectChangeMask,
+    });
+    chrome.scripting.executeScript({
+      target: { tabId },
+      func: closeMaskMove,
+    });
+  })
+})
+
+// 在这里执行您需要在 popup 关闭时进行的操作 （没用）
+// window.addEventListener('unload', function() {
+  // chrome.storage.sync.set({isOpen: false})
+  // getTabId().then(tabId => {
+  //   chrome.scripting.executeScript({
+  //     target: { tabId },
+  //     func: injectCloseMask,
+  //   });
+  // });
+// });
