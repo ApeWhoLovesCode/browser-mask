@@ -1,0 +1,13 @@
+@config "./tailwind.config.js";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.progress::-webkit-progress-value {
+  background: #7791f6;
+}
+
+progress::-webkit-progress-bar {
+  background: #20293b;
+}

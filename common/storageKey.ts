@@ -1,0 +1,1 @@
+export const MASK_STORAGE = "LHH-BROWSER-MASK"
