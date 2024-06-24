@@ -1,9 +1,9 @@
 {
-  "name": "test-plasmo",
-  "displayName": "Test plasmo",
-  "version": "0.0.1",
-  "description": "A basic Plasmo extension.",
-  "author": "Plasmo Corp. <foss@plasmo.com>",
+  "name": "browser-mask",
+  "displayName": "browser-mask",
+  "version": "1.0.3",
+  "description": "Provide a mask layer for the browser.",
+  "author": "LHH. <970519495@qq.com>",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
