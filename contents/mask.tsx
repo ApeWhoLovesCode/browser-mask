@@ -66,7 +66,7 @@ export default function Mask() {
     <>
       {isOpen && (
         <div 
-          className="fixed -top-1 -left-1 size-0 transition-all" 
+          className="fixed -top-1 -left-1 size-0 transition-all z-[999999]" 
           style={{ 
             boxShadow: `55vmax 55vmax 0 55vmax rgba(0, 0, 0, ${state.opacity / 100})`
           }}

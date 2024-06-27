@@ -34,7 +34,7 @@
     ],
     "name": "browser-mask",
     "description": "Provide a mask layer for the browser.",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "permissions": ["activeTab"]
   }
 }
