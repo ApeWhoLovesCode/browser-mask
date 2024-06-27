@@ -2,16 +2,13 @@ import { useStorage } from "@plasmohq/storage/hook"
 import "./style.css"
 import { MASK_STORAGE } from "~common/storageKey"
 import type { MaskState } from "~type"
-import { getActiveTab } from "~utils/tab"
+import { getActiveTab, isIncludesId } from "~utils/tab"
 import { useEffect, useState } from "react"
-import { handleUrl } from "~utils/url"
+import { getHostFromUrl } from "~utils/url"
 import React from "react"
+import { rangeOpacity } from "~utils/range"
 
 const INIT_OPACITY = 40;
-
-function rangeOpacity(newOpacity: number) {
-  return Math.min(Math.max(Math.round(newOpacity), 0), 100);
-}
 
 function Button({className, ...props}: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>) {
   return (
@@ -24,16 +21,15 @@ function IndexPopup() {
     isOpen: false,
     tabIds: [],
     opacity: INIT_OPACITY,
-    btnSize: 40
   })
   const progressRef = React.useRef<HTMLProgressElement>(null)
   const [url, setUrl] = useState('')
 
-  const isUrlActive = state.tabIds.includes(url)
+  const isUrlActive = isIncludesId(url, state.tabIds)
 
   useEffect(() => {
     getActiveTab().then((tab) => {
-      setUrl(handleUrl(tab.url))
+      setUrl(getHostFromUrl(tab.url))
     })
   }, [])
 
@@ -62,15 +58,20 @@ function IndexPopup() {
     })
   }
 
+  const addTabId = (id: string) => {
+    if(!state.tabIds) state.tabIds = []
+    state.tabIds.push(url)
+  }
+
   return (
     <div className="py-3 bg-black w-60">
       <div 
-        className={`${!isUrlActive ? ' line-through' : ''} mx-2 pb-2 mb-2 text-gray-400 border-b border-indigo-500 border-solid hover:bg-gray-800 cursor-pointer`}
+        className={`${!isUrlActive ? ' line-through' : ''} mx-2 p-2 mb-4 rounded-sm text-gray-400 border-b border-indigo-500 border-solid hover:bg-gray-800 cursor-pointer`}
         onClick={() => {
           if(isUrlActive) {
             state.tabIds = state.tabIds.filter((item) => item !== url)
           } else {
-            state.tabIds.push(url)
+            addTabId(url)
           }
           setState({ ...state })
         }}
@@ -96,8 +97,8 @@ function IndexPopup() {
           onClick={async () => {
             const isOpen = !state.isOpen
             if(isOpen) {
-              if(!state.tabIds.includes(url)) {
-                state.tabIds.push(url)
+              if(!isUrlActive) {
+                addTabId(url)
               }
             } else {
               state.tabIds = []
@@ -106,7 +107,17 @@ function IndexPopup() {
           }}
         >{state.isOpen ? "关闭" : "打开"}</Button>
         {/* <Button>移动</Button> */}
-        <Button onClick={() => setState({ ...state, opacity: INIT_OPACITY })}>重置</Button>
+        <Button onClick={() => setState({ ...state, opacity: INIT_OPACITY, tabIds: [] })}>重置</Button>
+      </div>
+      <div className="mt-4 px-4 text-xs text-gray-400 space-y-2">
+        <div>
+          <span className="inline-block w-10 font-medium">开/关:</span>
+          Ctrl Shift M 
+        </div>
+        <div>
+          <span className="inline-block w-10 font-medium">亮度:</span>
+          Ctrl Shift +/-
+        </div>
       </div>
     </div>
   )

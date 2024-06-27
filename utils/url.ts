@@ -1,3 +1,3 @@
-export function handleUrl(url: string = '') {
-  return url.split('?')[0]
+export function getHostFromUrl(url: string) {
+  return url.match(/(http[s]?:\/\/)?([^\/]+)/)?.[2]
 }
