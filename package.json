@@ -33,7 +33,7 @@
       "https://*/*"
     ],
     "name": "browser-mask",
-    "description": "Provide a mask layer for the browser.",
+    "description": "用于调节浏览器页面的亮度",
     "version": "1.0.4",
     "permissions": ["activeTab"]
   }

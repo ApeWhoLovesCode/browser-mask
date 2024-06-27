@@ -15,7 +15,11 @@ export const getStyle = () => {
 }
 
 export default function Mask() {
-  const [state, setState] = useStorage<Partial<MaskState>>(MASK_STORAGE, {})
+  const [state, setState] = useStorage<Partial<MaskState>>(MASK_STORAGE, {
+    isOpen: false,
+    tabIds: [],
+    opacity: 40,
+  })
 
   const [url, setUrl] = useState('')
 
