@@ -1,1 +1,2 @@
-export const MASK_STORAGE = "LHH-BROWSER-MASK"
+export const MASK_STORAGE = "LHH-BROWSER-MASK";
+export const IFRAME_PAGE_STORAGE = "LHH-IFRAME-PAGE";
