@@ -3,17 +3,19 @@ import { useStorage } from "@plasmohq/storage/hook";
 import type { MaskState } from "~type";
 import { MASK_STORAGE } from "~common/storageKey";
 import { useEffect, useState } from "react";
-import { isIncludesId } from "~utils/tab";
+import { isIncludesId, isTabActive } from "~utils/tab";
 import { rangeOpacity } from "~utils/range";
 import { getPlasmoShadowContainer } from "~utils/dom";
 
 export default function Mask() {
-  const [state, setState] = useStorage<Partial<MaskState>>(MASK_STORAGE, {
+  const [state, setState] = useStorage<MaskState>(MASK_STORAGE, {
     isOpen: false,
     tabIds: [],
     opacity: 40,
     curValid: false,
   });
+
+  console.log("state: ", state.tabIds);
 
   const [url, setUrl] = useState("");
 
@@ -36,7 +38,9 @@ export default function Mask() {
         setState((data) => {
           if (!isIncludesId(hostUrl, data.tabIds)) {
             if (!data.tabIds) data.tabIds = [];
-            data.tabIds.push(hostUrl);
+            if (!data.tabIds.includes(url)) {
+              data.tabIds.push(hostUrl);
+            }
             data.isOpen = true;
           } else {
             data.isOpen = !data.isOpen;
@@ -63,9 +67,7 @@ export default function Mask() {
     };
   }, []);
 
-  const isUrlActive = !state.curValid || isIncludesId(url, state.tabIds);
-
-  const isOpen = state.isOpen && isUrlActive;
+  const isOpen = state.isOpen && isTabActive(url, state);
 
   return (
     <>

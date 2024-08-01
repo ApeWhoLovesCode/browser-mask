@@ -2,7 +2,7 @@ import { useStorage } from "@plasmohq/storage/hook";
 import "./style.css";
 import { MASK_STORAGE } from "~common/storageKey";
 import type { MaskState } from "~type";
-import { getActiveTab, isIncludesId } from "~utils/tab";
+import { getActiveTab, isIncludesId, isTabActive } from "~utils/tab";
 import { useEffect, useState } from "react";
 import { getHostFromUrl } from "~utils/url";
 import React from "react";
@@ -35,7 +35,8 @@ function IndexPopup() {
   const progressRef = React.useRef<HTMLProgressElement>(null);
   const [url, setUrl] = useState("");
 
-  const isUrlActive = !state.curValid || isIncludesId(url, state.tabIds);
+  const isTabIncludes = isIncludesId(url, state.tabIds);
+  const isUrlActive = !state.curValid ? !isTabIncludes : isTabIncludes;
 
   useEffect(() => {
     getActiveTab().then((tab) => {
@@ -70,9 +71,15 @@ function IndexPopup() {
     });
   };
 
-  const addTabId = (id: string) => {
+  const onChangeTabId = (isAdd: boolean) => {
     if (!state.tabIds) state.tabIds = [];
-    state.tabIds.push(url);
+    if (isAdd) {
+      if (!state.tabIds.includes(url)) {
+        state.tabIds.push(url);
+      }
+    } else {
+      state.tabIds = state.tabIds.filter((tabId) => !tabId.includes(url));
+    }
   };
 
   return (
@@ -93,11 +100,7 @@ function IndexPopup() {
       <div
         className={`${!isUrlActive ? " line-through" : ""} mx-2 p-2 mb-4 rounded-sm text-gray-400 border-b border-indigo-500 border-solid hover:bg-gray-800 cursor-pointer`}
         onClick={() => {
-          if (isUrlActive) {
-            state.tabIds = state.tabIds.filter((item) => item !== url);
-          } else {
-            addTabId(url);
-          }
+          onChangeTabId(!isTabIncludes);
           setState({ ...state });
         }}
       >
@@ -133,13 +136,7 @@ function IndexPopup() {
         <Button
           onClick={async () => {
             const isOpen = !state.isOpen;
-            if (isOpen) {
-              if (!isUrlActive) {
-                addTabId(url);
-              }
-            } else {
-              state.tabIds = [];
-            }
+            onChangeTabId(isOpen ? state.curValid : !state.curValid);
             setState({ ...state, isOpen });
           }}
         >

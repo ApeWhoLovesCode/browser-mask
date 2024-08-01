@@ -7,7 +7,7 @@
 | 开/关 | Ctrl Shift M   |
 | 亮度  | Ctrl Shift +/- |
 
-<video src="./assets/browser-mask-demo-xs.mp4" style="width:400px;"></video>
+<video controls src="https://github.com/ApeWhoLovesCode/browser-mask/blob/main/assets/browser-mask-demo.mp4" style="width:400px;"></video>
 
 ## 使用
 
