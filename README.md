@@ -7,15 +7,9 @@
 | 开/关 | Ctrl Shift M   |
 | 亮度  | Ctrl Shift +/- |
 
-<video controls src="https://github.com/ApeWhoLovesCode/browser-mask/blob/main/assets/browser-mask-demo.mp4" style="width:400px;"></video>
+![browser-mask-demo](https://github.com/ApeWhoLovesCode/browser-mask/blob/main/assets/browser-mask-demo.mp4)
 
-### test1
-
-<img src="./assets/browser-mask-demo.gif" style="width: 400px" />
-
-### test2
-
-<img src="https://github.com/ApeWhoLovesCode/browser-mask/blob/main/assets/browser-mask-demo.gif" alt="browser-mask-demo" style="width: 400px" />
+![browser-mask-demo](https://github.com/ApeWhoLovesCode/browser-mask/blob/main/assets/browser-mask-demo.gif)
 
 ## 使用
 
