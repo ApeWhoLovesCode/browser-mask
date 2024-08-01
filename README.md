@@ -9,6 +9,14 @@
 
 <video controls src="https://github.com/ApeWhoLovesCode/browser-mask/blob/main/assets/browser-mask-demo.mp4" style="width:400px;"></video>
 
+### test1
+
+<img src="./assets/browser-mask-demo.gif" style="width: 400px" />
+
+### test2
+
+<img src="https://github.com/ApeWhoLovesCode/browser-mask/blob/main/assets/browser-mask-demo.gif" alt="browser-mask-demo" style="width: 400px" />
+
 ## 使用
 
 [下载 browser-mask](https://github.com/ApeWhoLovesCode/browser-mask/tree/main/build/browser-mask.zip)
