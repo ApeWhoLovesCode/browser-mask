@@ -11,6 +11,7 @@ export default function Mask() {
     isOpen: false,
     tabIds: [],
     opacity: 40,
+    curValid: false,
   });
 
   const [url, setUrl] = useState("");
@@ -57,7 +58,9 @@ export default function Mask() {
     };
   }, []);
 
-  const isOpen = state.isOpen && isIncludesId(url, state.tabIds);
+  const isUrlActive = !state.curValid || isIncludesId(url, state.tabIds);
+
+  const isOpen = state.isOpen && isUrlActive;
 
   return (
     <>

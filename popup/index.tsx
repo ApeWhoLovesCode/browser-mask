@@ -30,11 +30,12 @@ function IndexPopup() {
     isOpen: false,
     tabIds: [],
     opacity: INIT_OPACITY,
+    curValid: false,
   });
   const progressRef = React.useRef<HTMLProgressElement>(null);
   const [url, setUrl] = useState("");
 
-  const isUrlActive = isIncludesId(url, state.tabIds);
+  const isUrlActive = !state.curValid || isIncludesId(url, state.tabIds);
 
   useEffect(() => {
     getActiveTab().then((tab) => {
@@ -76,6 +77,19 @@ function IndexPopup() {
 
   return (
     <div className="py-3 bg-black w-60">
+      <div
+        className="px-2 mb-2 flex items-center gap-x-2 cursor-pointer group"
+        onClick={() => setState({ ...state, curValid: !state.curValid })}
+      >
+        <div className="size-4 rounded-full flex justify-center items-center border border-indigo-500 border-solid group-hover:border-indigo-400">
+          {!state.curValid && (
+            <div className="size-2.5 bg-indigo-500 rounded-full"></div>
+          )}
+        </div>
+        <div className="flex-1 text-[10px] text-gray-400 group-hover:text-gray-300/85">
+          默认所有网站启用遮罩，关闭后需手动激活的网站才有遮罩
+        </div>
+      </div>
       <div
         className={`${!isUrlActive ? " line-through" : ""} mx-2 p-2 mb-4 rounded-sm text-gray-400 border-b border-indigo-500 border-solid hover:bg-gray-800 cursor-pointer`}
         onClick={() => {
