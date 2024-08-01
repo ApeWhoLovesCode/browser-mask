@@ -1,13 +1,13 @@
 ## 描述
 
+<img src="./assets/icon.svg" style="width: 200px" />
+
 用于调整浏览器中某个页面的亮度。
 
 | 描述  | 快捷键         |
 | ----- | -------------- |
 | 开/关 | Ctrl Shift M   |
 | 亮度  | Ctrl Shift +/- |
-
-![browser-mask-demo](https://github.com/ApeWhoLovesCode/browser-mask/blob/main/assets/browser-mask-demo.mp4)
 
 ![browser-mask-demo](https://github.com/ApeWhoLovesCode/browser-mask/blob/main/assets/browser-mask-demo.gif)
 
