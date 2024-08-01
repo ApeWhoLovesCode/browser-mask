@@ -24,6 +24,7 @@ yarn-error.log*
 
 out/
 build/chrome-mv3-dev
+build/chrome-mv3-prod
 dist/
 
 # plasmo
