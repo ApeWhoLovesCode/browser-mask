@@ -5,6 +5,7 @@ import { MASK_STORAGE } from "~common/storageKey";
 import { useEffect, useState } from "react";
 import { isIncludesId } from "~utils/tab";
 import { rangeOpacity } from "~utils/range";
+import { getPlasmoShadowContainer } from "~utils/dom";
 
 export default function Mask() {
   const [state, setState] = useStorage<Partial<MaskState>>(MASK_STORAGE, {
@@ -51,6 +52,10 @@ export default function Mask() {
         }
       }
     };
+
+    // 解决 mask fixed 无效的问题
+    const plasmoShadowContainer = getPlasmoShadowContainer();
+    plasmoShadowContainer.style.position = "fixed";
 
     window.addEventListener("keydown", onKeyDown);
     return () => {
