@@ -3,7 +3,7 @@ import { useStorage } from "@plasmohq/storage/hook";
 import type { MaskState } from "~type";
 import { MASK_STORAGE } from "~common/storageKey";
 import { useEffect, useState } from "react";
-import { isIncludesId, isTabActive } from "~utils/tab";
+import { isIncludesId, isTabActive, onChangeTabId } from "~utils/tab";
 import { rangeOpacity } from "~utils/range";
 import { getPlasmoShadowContainer } from "~utils/dom";
 
@@ -15,45 +15,52 @@ export default function Mask() {
     curValid: false,
   });
 
-  console.log("state: ", state.tabIds);
-
   const [url, setUrl] = useState("");
 
   useEffect(() => {
     const hostUrl = window.location.host;
     setUrl(hostUrl);
 
-    const changeOpacity = (v: number) => {
-      setState((data) => {
-        if (!data.isOpen) return data;
-        data.opacity = rangeOpacity(data.opacity + v);
-        return { ...data };
-      });
-    };
-
     const onKeyDown = (e: KeyboardEvent) => {
       // e.metaKey: true 代表 Mac command
       const isCtrlAndShift = e.ctrlKey && e.shiftKey;
-      if (isCtrlAndShift && (e.key === "m" || e.key === "M")) {
+      if (!isCtrlAndShift) return;
+
+      const changeOpacity = (v: number) => {
         setState((data) => {
-          if (!isIncludesId(hostUrl, data.tabIds)) {
-            if (!data.tabIds) data.tabIds = [];
-            if (!data.tabIds.includes(url)) {
-              data.tabIds.push(hostUrl);
-            }
-            data.isOpen = true;
+          if (!data.isOpen) return data;
+          data.opacity = rangeOpacity(data.opacity + v);
+          return { ...data };
+        });
+      };
+
+      if (e.key === "m" || e.key === "M") {
+        setState((data) => {
+          data.isOpen = !data.isOpen;
+          if (data.isOpen) {
+            onChangeTabId({
+              isAdd: !data.curValid ? !data.isOpen : data.isOpen,
+              tabIds: data.tabIds,
+              url: hostUrl,
+            });
           } else {
-            data.isOpen = !data.isOpen;
             data.tabIds = [];
           }
           return { ...data };
         });
-      } else if (isCtrlAndShift) {
-        if (e.key === "=" || e.key === "+") {
-          changeOpacity(10);
-        } else if (e.key === "-" || e.key === "_") {
-          changeOpacity(-10);
-        }
+      } else if (e.key === "c" || e.key === "C") {
+        setState((data) => {
+          onChangeTabId({
+            isAdd: !isIncludesId(hostUrl, data.tabIds),
+            tabIds: data.tabIds,
+            url: hostUrl,
+          });
+          return { ...data };
+        });
+      } else if (e.key === "=" || e.key === "+") {
+        changeOpacity(10);
+      } else if (e.key === "-" || e.key === "_") {
+        changeOpacity(-10);
       }
     };
 
