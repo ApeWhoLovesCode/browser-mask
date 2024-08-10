@@ -7,39 +7,10 @@ import { useEffect, useState } from "react";
 import { getHostFromUrl } from "~utils/url";
 import React from "react";
 import { rangeOpacity } from "~utils/range";
-import {
-  INIT_OPACITY,
-  getDefaultState,
-  prefixKeyLabels,
-  prefixKeys,
-} from "~common/state";
-
-type DivProps = React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLDivElement>,
-  HTMLDivElement
->;
-
-function Tag({ className = "", children, ...props }: DivProps) {
-  return (
-    <span
-      className={`text-[10px] inline-block ml-2 text-nowrap bg-indigo-900 text-white rounded px-1.5 py-0.5 ${className}`}
-      {...props}
-    >
-      {children}
-    </span>
-  );
-}
-
-function Button({ className = "", children, ...props }: DivProps) {
-  return (
-    <div
-      className={`font-medium px-3 text-nowrap py-1 rounded flex justify-center items-center h-fit transition-all text-gray-300 bg-zinc-600 hover:bg-zinc-500 hover:text-gray-200 cursor-pointer ${className}`}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-}
+import { getDefaultState, prefixKeyLabels, prefixKeys } from "~common/state";
+import Tag from "./components/Tag";
+import Button from "./components/Button";
+import KeyboardKeyPop from "./components/KeyboardKeyPop";
 
 const defaultState = getDefaultState();
 
@@ -117,8 +88,7 @@ function IndexPopup() {
         <div>
           当前网站 ({isUrlActive ? "激活" : "未激活"})
           <Tag>
-            {prefixKeyStr} +{" "}
-            {state.keyboardKey.activateKey?.toLocaleUpperCase()}
+            {prefixKeyStr} {state.keyboardKey.activateKey?.toLocaleUpperCase()}
           </Tag>
         </div>
         <div className="truncate">{url}</div>
@@ -172,17 +142,10 @@ function IndexPopup() {
           重置
         </Button>
       </div>
-      <div className="mt-4 px-4 text-xs text-gray-400 space-y-2">
-        <div>
-          <span className="inline-block w-10 font-medium">开/关:</span>
-          {prefixKeyStr} {state.keyboardKey.openKey?.toLocaleUpperCase()}
-        </div>
-        <div>
-          <span className="inline-block w-10 font-medium">亮度:</span>
-          {prefixKeyStr} {state.keyboardKey.addKey?.toLocaleUpperCase()}/
-          {state.keyboardKey.reduceKey?.toLocaleUpperCase()}
-        </div>
-      </div>
+      <KeyboardKeyPop
+        keyboardKey={state.keyboardKey}
+        prefixKeyStr={prefixKeyStr}
+      />
     </div>
   );
 }
