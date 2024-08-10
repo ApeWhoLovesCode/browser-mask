@@ -6,14 +6,13 @@ import { useEffect, useState } from "react";
 import { isIncludesId, isTabActive, onChangeTabId } from "~utils/tab";
 import { rangeOpacity } from "~utils/range";
 import { getPlasmoShadowContainer } from "~utils/dom";
+import { getDefaultState, prefixKeys } from "~common/state";
 
 export default function Mask() {
-  const [state, setState] = useStorage<MaskState>(MASK_STORAGE, {
-    isOpen: false,
-    tabIds: [],
-    opacity: 40,
-    curValid: false,
-  });
+  const [state, setState] = useStorage<MaskState>(
+    MASK_STORAGE,
+    getDefaultState()
+  );
 
   const [url, setUrl] = useState("");
 
@@ -22,9 +21,10 @@ export default function Mask() {
     setUrl(hostUrl);
 
     const onKeyDown = (e: KeyboardEvent) => {
-      // e.metaKey: true 代表 Mac command
-      const isCtrlAndShift = e.ctrlKey && e.shiftKey;
-      if (!isCtrlAndShift) return;
+      if (!state.isOpen) return;
+
+      const keyArr = prefixKeys.filter((k) => state.keyboardKey[k]);
+      if (keyArr.some((k) => !e[k])) return;
 
       const changeOpacity = (v: number) => {
         setState((data) => {
