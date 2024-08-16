@@ -1,4 +1,4 @@
-import { MaskState } from "~type";
+import type { MaskState, RadioKey } from "~type";
 
 export const INIT_OPACITY = 40;
 
@@ -10,6 +10,12 @@ export const getDefaultState = (): MaskState => ({
   keyboardKey: {
     altKey: true,
     shiftKey: true,
+    openKey: "KeyM",
+    addKey: "Equal",
+    reduceKey: "Minus",
+    activateKey: "KeyC",
+  },
+  otherKeyLabel: {
     openKey: "m",
     addKey: "+",
     reduceKey: "-",
@@ -17,18 +23,16 @@ export const getDefaultState = (): MaskState => ({
   },
 });
 
-export const prefixKeys: (keyof MaskState["keyboardKey"])[] = [
+export const prefixKeys: RadioKey[] = [
   "altKey",
   "shiftKey",
   "ctrlKey",
   "metaKey",
 ];
 
-export const prefixKeyLabels: Partial<
-  Record<keyof MaskState["keyboardKey"], string>
-> = {
+export const prefixKeyLabels: Partial<Record<RadioKey, string>> = {
   altKey: "Alt",
   shiftKey: "Shift",
   ctrlKey: "Ctrl",
-  metaKey: "Mac",
+  metaKey: "Command",
 };

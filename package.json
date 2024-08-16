@@ -1,7 +1,7 @@
 {
   "name": "browser-mask",
   "displayName": "browser-mask",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "description": "Provide a mask layer for the browser.",
   "author": "LHH. <970519495@qq.com>",
   "scripts": {
@@ -34,7 +34,7 @@
     ],
     "name": "browser-mask",
     "description": "用于调节浏览器页面的亮度",
-    "version": "1.0.9",
+    "version": "1.1.0",
     "permissions": [
       "activeTab"
     ]

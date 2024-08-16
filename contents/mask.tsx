@@ -2,7 +2,7 @@ import "./style.css";
 import { useStorage } from "@plasmohq/storage/hook";
 import type { MaskState } from "~type";
 import { MASK_STORAGE } from "~common/storageKey";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { isIncludesId, isTabActive, onChangeTabId } from "~utils/tab";
 import { rangeOpacity } from "~utils/range";
 import { getPlasmoShadowContainer } from "~utils/dom";
@@ -13,6 +13,8 @@ export default function Mask() {
     MASK_STORAGE,
     getDefaultState()
   );
+  const keyboardKey = useRef<MaskState["keyboardKey"]>();
+  keyboardKey.current = state.keyboardKey;
 
   const [url, setUrl] = useState("");
 
@@ -21,9 +23,7 @@ export default function Mask() {
     setUrl(hostUrl);
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (!state.isOpen) return;
-
-      const keyArr = prefixKeys.filter((k) => state.keyboardKey[k]);
+      const keyArr = prefixKeys.filter((k) => keyboardKey.current[k]);
       if (keyArr.some((k) => !e[k])) return;
 
       const changeOpacity = (v: number) => {
@@ -34,7 +34,7 @@ export default function Mask() {
         });
       };
 
-      if (e.key === "m" || e.key === "M") {
+      if (e.code === keyboardKey.current.openKey) {
         setState((data) => {
           data.isOpen = !data.isOpen;
           if (data.isOpen) {
@@ -48,7 +48,7 @@ export default function Mask() {
           }
           return { ...data };
         });
-      } else if (e.key === "c" || e.key === "C") {
+      } else if (e.code === keyboardKey.current.activateKey) {
         setState((data) => {
           onChangeTabId({
             isAdd: !isIncludesId(hostUrl, data.tabIds),
@@ -57,9 +57,9 @@ export default function Mask() {
           });
           return { ...data };
         });
-      } else if (e.key === "=" || e.key === "+") {
+      } else if (e.code === keyboardKey.current.addKey) {
         changeOpacity(10);
-      } else if (e.key === "-" || e.key === "_") {
+      } else if (e.code === keyboardKey.current.reduceKey) {
         changeOpacity(-10);
       }
     };

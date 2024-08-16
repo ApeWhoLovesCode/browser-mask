@@ -1,3 +1,7 @@
+export type RadioKey = "altKey" | "shiftKey" | "ctrlKey" | "metaKey";
+
+export type OtherKey = "openKey" | "addKey" | "reduceKey" | "activateKey";
+
 export type MaskState = {
   /** 网页id */
   tabIds: string[];
@@ -26,4 +30,5 @@ export type MaskState = {
     /** @default: "c" */
     activateKey: string;
   };
+  otherKeyLabel: Record<OtherKey, string>;
 };

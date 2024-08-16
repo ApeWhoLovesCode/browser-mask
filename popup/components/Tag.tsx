@@ -1,4 +1,4 @@
-import { DivProps } from "../type";
+import type { DivProps } from "../type";
 
 export default function Tag({ className = "", children, ...props }: DivProps) {
   return (

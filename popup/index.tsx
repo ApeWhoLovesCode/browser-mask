@@ -11,6 +11,7 @@ import { getDefaultState, prefixKeyLabels, prefixKeys } from "~common/state";
 import Tag from "./components/Tag";
 import Button from "./components/Button";
 import KeyboardKeyPop from "./components/KeyboardKeyPop";
+import Radio from "./components/Radio";
 
 const defaultState = getDefaultState();
 
@@ -69,11 +70,7 @@ function IndexPopup() {
         className="px-2 mb-2 flex items-center gap-x-2 cursor-pointer group"
         onClick={() => setState({ ...state, curValid: !state.curValid })}
       >
-        <div className="size-4 rounded-full flex justify-center items-center border border-indigo-500 border-solid group-hover:border-indigo-400">
-          {!state.curValid && (
-            <div className="size-2.5 bg-indigo-500 rounded-full"></div>
-          )}
-        </div>
+        <Radio checked={!state.curValid} />
         <div className="flex-1 text-[10px] text-gray-400 group-hover:text-gray-300/85">
           默认打开遮罩后所有网站都将启用，关闭后需手动激活的网站才有遮罩（取反）。
         </div>
@@ -85,11 +82,14 @@ function IndexPopup() {
           setState({ ...state });
         }}
       >
-        <div>
+        <div className="flex items-center">
           当前网站 ({isUrlActive ? "激活" : "未激活"})
-          <Tag>
-            {prefixKeyStr} {state.keyboardKey.activateKey?.toLocaleUpperCase()}
-          </Tag>
+          <div className="flex-1 w-0">
+            <Tag className="max-w-full truncate">
+              {prefixKeyStr}{" "}
+              {state.otherKeyLabel?.activateKey?.toLocaleUpperCase()}
+            </Tag>
+          </div>
         </div>
         <div className="truncate">{url}</div>
       </div>
@@ -143,7 +143,19 @@ function IndexPopup() {
         </Button>
       </div>
       <KeyboardKeyPop
-        keyboardKey={state.keyboardKey}
+        state={state}
+        setKeyboardKey={(keys, othKeys) =>
+          setState((state) => {
+            const d = {
+              ...state,
+              keyboardKey: keys,
+            };
+            if (othKeys) {
+              d.otherKeyLabel = { ...state.otherKeyLabel, ...othKeys };
+            }
+            return d;
+          })
+        }
         prefixKeyStr={prefixKeyStr}
       />
     </div>
