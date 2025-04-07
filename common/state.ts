@@ -1,5 +1,7 @@
 import type { MaskState, RadioKey } from "~type";
 
+export const MASK_ID = "lhh-browser-mask";
+
 export const INIT_OPACITY = 40;
 
 export const getDefaultState = (): MaskState => ({

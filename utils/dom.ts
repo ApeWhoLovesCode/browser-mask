@@ -1,3 +1,5 @@
+import { MASK_ID } from "~common/state";
+
 function getPlasmoShadowRoot() {
   return document.querySelector("plasmo-csui")?.shadowRoot;
 }

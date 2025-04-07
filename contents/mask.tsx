@@ -80,7 +80,7 @@ export default function Mask() {
     <>
       {isOpen && (
         <div
-          className="browser-mask"
+          id="lhh-browser-mask"
           style={{
             boxShadow: `55vmax 55vmax 0 55vmax rgba(0, 0, 0, ${state.opacity / 100})`,
           }}
