@@ -5,8 +5,8 @@ import { MASK_STORAGE } from "~common/storageKey";
 import { useEffect, useRef, useState } from "react";
 import { isIncludesId, isTabActive, onChangeTabId } from "~utils/tab";
 import { rangeOpacity } from "~utils/range";
-import { getPlasmoShadowContainer } from "~utils/dom";
-import { getDefaultState, prefixKeys } from "~common/state";
+import { getOnePlasmoShadowContainer, getPlasmoShadowContainer } from "~utils/dom";
+import { getDefaultState, MASK_ID, prefixKeys } from "~common/state";
 
 export default function Mask() {
   const [state, setState] = useStorage<MaskState>(
@@ -65,8 +65,11 @@ export default function Mask() {
     };
 
     // 解决 mask fixed 无效的问题
-    const plasmoShadowContainer = getPlasmoShadowContainer();
-    plasmoShadowContainer.style.position = "fixed";
+    // const plasmoShadowContainer = getPlasmoShadowContainer(MASK_ID);
+    const plasmoShadowContainer = getOnePlasmoShadowContainer();
+    if(plasmoShadowContainer) {
+      plasmoShadowContainer.style.position = "fixed";
+    }
 
     window.addEventListener("keydown", onKeyDown);
     return () => {
@@ -77,15 +80,14 @@ export default function Mask() {
   const isOpen = state.isOpen && isTabActive(url, state);
 
   return (
-    <>
+    <div id={MASK_ID}>
       {isOpen && (
         <div
-          id="lhh-browser-mask"
           style={{
             boxShadow: `55vmax 55vmax 0 55vmax rgba(0, 0, 0, ${state.opacity / 100})`,
           }}
         ></div>
       )}
-    </>
+    </div>
   );
 }

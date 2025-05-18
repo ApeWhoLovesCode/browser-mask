@@ -1,13 +1,29 @@
-import { MASK_ID } from "~common/state";
-
 function getPlasmoShadowRoot() {
   return document.querySelector("plasmo-csui")?.shadowRoot;
 }
 
-export function getPlasmoShadowContainer() {
+export function getOnePlasmoShadowContainer() {
   return getPlasmoShadowRoot()?.querySelector(
     "#plasmo-shadow-container"
   ) as HTMLElement;
+}
+
+export function getPlasmoShadowContainer(id: string) {
+  const arr = getPlasmoShadowRoot()?.querySelectorAll(
+    "#plasmo-shadow-container"
+  );
+  let target: HTMLElement = null 
+  for(let i = 0; i < arr.length; i++) {
+    const dom = arr[i]
+    console.log('dom: ', dom);
+    const findItem = dom.querySelector(id)
+    console.log('findItem: ', findItem);
+    if(dom.querySelector(id)) {
+      target = arr[i] as HTMLElement
+    }
+  }
+  console.log('target: ', target);
+  return target
 }
 
 //see https://github.com/PlasmoHQ/plasmo/issues/652
