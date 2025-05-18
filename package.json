@@ -10,7 +10,6 @@
     "package": "plasmo package"
   },
   "dependencies": {
-    "@plasmohq/messaging": "^0.6.2",
     "@plasmohq/storage": "^1.11.0",
     "plasmo": "^0.88.0",
     "react": "18.2.0",
@@ -34,7 +33,7 @@
     ],
     "name": "browser-mask",
     "description": "用于调节浏览器页面的亮度",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "permissions": [
       "activeTab"
     ]

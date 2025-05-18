@@ -14,15 +14,10 @@ export function getPlasmoShadowContainer(id: string) {
   );
   let target: HTMLElement = null 
   for(let i = 0; i < arr.length; i++) {
-    const dom = arr[i]
-    console.log('dom: ', dom);
-    const findItem = dom.querySelector(id)
-    console.log('findItem: ', findItem);
-    if(dom.querySelector(id)) {
+    if(arr[i].querySelector(`#${id}`)) {
       target = arr[i] as HTMLElement
     }
   }
-  console.log('target: ', target);
   return target
 }
 

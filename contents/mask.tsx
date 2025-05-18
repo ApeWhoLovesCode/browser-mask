@@ -65,8 +65,8 @@ export default function Mask() {
     };
 
     // 解决 mask fixed 无效的问题
-    // const plasmoShadowContainer = getPlasmoShadowContainer(MASK_ID);
-    const plasmoShadowContainer = getOnePlasmoShadowContainer();
+    const plasmoShadowContainer = getPlasmoShadowContainer(MASK_ID);
+    // const plasmoShadowContainer = getOnePlasmoShadowContainer();
     if(plasmoShadowContainer) {
       plasmoShadowContainer.style.position = "fixed";
     }
